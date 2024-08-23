@@ -6,10 +6,34 @@ import { StateProps } from "@/types";
 
 const statesFilePath = path.join(process.cwd(), "public/mocks/states.json");
 
-export async function GET() {
+export async function GET(request: NextRequest) {
   try {
     const states = await fsPromises.readFile(statesFilePath, "utf-8");
-    const json = JSON.parse(states);
+    const json: StateProps[] = JSON.parse(states);
+    const searchparamsId = request.nextUrl.searchParams.get("id");
+    if (searchparamsId) {
+      const stateIndex = json.findIndex(
+        (user: StateProps) => user.id === searchparamsId
+      );
+
+      if (stateIndex < 0) {
+        return new NextResponse(
+          JSON.stringify({ message: "State not found!" }),
+          {
+            status: 404,
+            headers: { "content-type": "application/json" },
+          }
+        );
+      }
+
+      return new NextResponse(JSON.stringify({ data: json[stateIndex] }), {
+        status: 200,
+        headers: { "content-type": "application/json" },
+      });
+    }
+    // console.log(request.nextUrl.searchParams.get("id"));
+    // return NextResponse.json(request.nextUrl.searchParams.get("id"));
+
     return NextResponse.json(json);
   } catch (error) {
     return new NextResponse(JSON.stringify({ message: "No states found!" }), {
@@ -25,8 +49,16 @@ export async function PATCH(req: NextRequest) {
 
     const jsonArray: StateProps[] = JSON.parse(states);
 
-    const { id, title, description, phonenumber, position1, price, position2 } =
-      await req.json();
+    const {
+      id,
+      title,
+      description,
+      phonenumber,
+      position1,
+      price,
+      position2,
+      creator,
+    } = await req.json();
 
     const userIndex = jsonArray.findIndex((user: StateProps) => user.id === id);
 
@@ -40,6 +72,7 @@ export async function PATCH(req: NextRequest) {
     let desiredState: StateProps = jsonArray[userIndex];
 
     desiredState.title = title ? title : desiredState.title;
+    desiredState.creator = creator ? creator : desiredState.creator;
     desiredState.description = description
       ? description
       : desiredState.description;
@@ -72,10 +105,17 @@ export async function POST(req: NextRequest) {
   try {
     const states = await fsPromises.readFile(statesFilePath, "utf-8");
 
-    const jsonArray = JSON.parse(states);
+    const jsonArray: StateProps[] = JSON.parse(states);
 
-    const { title, description, phonenumber, position1, price, position2 } =
-      await req.json();
+    const {
+      title,
+      description,
+      phonenumber,
+      position1,
+      price,
+      position2,
+      creator,
+    } = await req.json();
 
     const id = crypto.randomBytes(16).toString("hex");
 
@@ -87,6 +127,7 @@ export async function POST(req: NextRequest) {
       position1,
       price,
       position2,
+      creator,
     });
 
     const updatedData = JSON.stringify(jsonArray);
@@ -111,7 +152,7 @@ export async function DELETE(req: NextRequest) {
 
     const states = await fsPromises.readFile(statesFilePath, "utf-8");
 
-    const jsonArray = JSON.parse(states);
+    const jsonArray: StateProps[] = JSON.parse(states);
 
     const userIndex = jsonArray.findIndex((user: StateProps) => user.id === id);
 

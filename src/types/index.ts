@@ -1,5 +1,3 @@
-import { UUID } from "crypto";
-import { MouseEventHandler, ReactNode } from "react";
 
 export interface StateProps {
   id: string;
@@ -9,6 +7,7 @@ export interface StateProps {
   position2: number;
   price: number;
   phonenumber: number;
+  creator: string;
 }
 export interface UserProps {
   token: string;

@@ -1,3 +1,4 @@
+import { UserProps } from "@/types";
 import crypto from "crypto";
 import fsPromises from "fs/promises";
 import { NextRequest, NextResponse } from "next/server";
@@ -9,7 +10,7 @@ export async function POST(req: NextRequest) {
   try {
     const users = await fsPromises.readFile(statesFilePath, "utf-8");
 
-    const jsonArray = JSON.parse(users);
+    const jsonArray: UserProps[] = JSON.parse(users);
 
     const { username, email, password } = await req.json();
 

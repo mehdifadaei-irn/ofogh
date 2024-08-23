@@ -1,4 +1,3 @@
-
 export interface StateProps {
   id: string;
   title: string;
@@ -14,4 +13,12 @@ export interface UserProps {
   username: string;
   email: string;
   password: string;
+}
+
+export interface EditStateProps {
+  phonenumber: number;
+  price: number;
+  title: string;
+  description: string;
+  id: string;
 }

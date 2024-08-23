@@ -23,7 +23,7 @@ export const StateContext = createContext<StateContextType | undefined>(
 const Providers = ({ children }: PropsWithChildren<{}>) => {
   const [lat, setlat] = useState(null);
   const [lang, setlang] = useState(null);
-  const [ref, setRef] = useState(0);
+  const [ref, setRef] = useState<number>(0);
 
   return (
     <QueryClientProvider client={client}>

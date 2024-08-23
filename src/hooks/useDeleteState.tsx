@@ -8,6 +8,7 @@ import { useRouter } from "next/navigation";
 
 export function useDeleteState() {
   const router = useRouter();
+  const { setRef } = useCustomeContext();
   const {
     data: editRes,
     mutate,
@@ -21,6 +22,7 @@ export function useDeleteState() {
       return data;
     },
     onSuccess: () => {
+      setRef((prev: number) => prev + 1);
       // console.log("su");
       router.replace("/");
     },

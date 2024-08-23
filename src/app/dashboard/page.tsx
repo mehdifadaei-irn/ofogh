@@ -33,7 +33,7 @@ import Map from "@/components/landing/Map";
 import { toast } from "sonner";
 
 const page = () => {
-  const { lang, lat } = useCustomeContext();
+  const { lang, lat, setRef } = useCustomeContext();
   const routre = useRouter();
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -45,7 +45,7 @@ const page = () => {
     },
   });
 
-  const { mutate, isPending } = useMutation({
+  const { mutate, isPending, isError } = useMutation({
     mutationKey: ["create"],
     mutationFn: async ({
       title,
@@ -69,7 +69,9 @@ const page = () => {
       return data.data;
     },
     onSuccess: (e: any) => {
+      console.log(e, "er");
       localStorage.setItem("token", e.token);
+      setRef((prev: number) => prev + 1);
       routre.replace("/");
     },
   });
@@ -90,13 +92,17 @@ const page = () => {
       });
     }
   }
+
+  if (isError) {
+    return <div>Error</div>;
+  }
   return (
     <main className="container max-w-7xl">
-      <h1 className="mt-6 font-bold text-4xl w-full text-center">
+      <h1 className="md:my-6 my-2 font-bold text-4xl w-full text-center">
         Create Your State
       </h1>
       <div className="flex flex-row w-full justify-between">
-        <Map title="" pos1={48.86} pos2={2.3522} height={60} />,
+        <Map title="" pos1={48.86} pos2={2.35} height={60} />,
         <div className="md:w-1/3 w-full mx-auto">
           <Form {...form}>
             <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
@@ -152,7 +158,9 @@ const page = () => {
                   </FormItem>
                 )}
               />
-              <Button type="submit">Submit</Button>
+              <Button type="submit" disabled={isPending}>
+                Submit
+              </Button>
             </form>
           </Form>
         </div>
